@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Voting App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    .error {
+      color: red;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container" id="page1">
+    <h1>Welcome to Our Voting App</h1>
+    <input type="text" id="name" placeholder="Enter your Name" required>
+    <input type="text" id="voterId" placeholder="Enter your Voter ID" required>
+    <button onclick="validateInput()">Go</button>
+    <div id="error" class="error"></div>
+  </div>
+
+  <div class="container" id="page2" style="display: none;">
+    <h1>Choose your Representative</h1>
+    <button onclick="castVote('Candidate A')">Candidate A</button>
+    <button onclick="castVote('Candidate B')">Candidate B</button>
+  </div>
+
+  <div class="container" id="page3" style="display: none;">
+    <h1>Thank you for voting!</h1>
+    <button onclick="goToHome()">Home</button>
+    <button onclick="showResults()">Check Results</button>
+  </div>
+
+  <div class="container" id="resultsPage" style="display: none;">
+    <h1>Voting Results</h1>
+    <p>Candidate A: <span id="candidateA"></span></p>
+    <p>Candidate B: <span id="candidateB"></span></p>
+    <button onclick="goToHome()">Home</button>
+  </div>
+
+  <script>
+    let votes = {};
+    let hasVoted = false;
+
+    function validateInput() {
+      const name = document.getElementById('name').value;
+      const voterId = document.getElementById('voterId').value;
+
+      if (name === '' || voterId === '') {
+        document.getElementById('error').textContent = 'Please enter your name and Voter ID';
+        return;
+      }
+
+      if (votes[name + voterId]) {
+        document.getElementById('error').textContent = 'You have already voted!';
+        setTimeout(() => {
+          document.getElementById('error').textContent = '';
+          document.getElementById('page1').style.display = 'block';
+          document.getElementById('page2').style.display = 'none';
+        }, 2000);
+        return;
+      }
+
+      document.getElementById('error').textContent = '';
+      document.getElementById('page1').style.display = 'none';
+      document.getElementById('page2').style.display = 'block';
+    }
+
+    function castVote(candidate) {
+      const name = document.getElementById('name').value;
+      const voterId = document.getElementById('voterId').value;
+
+      if (!votes[name + voterId]) {
+        votes[name + voterId] = candidate;
+        hasVoted = true;
+        document.getElementById('page2').style.display = 'none';
+        document.getElementById('page3').style.display = 'block';
+      } else {
+        document.getElementById('error').textContent = 'You have already voted!';
+        setTimeout(() => {
+          document.getElementById('error').textContent = '';
+          document.getElementById('page1').style.display = 'block';
+          document.getElementById('page2').style.display = 'none';
+        }, 2000);
+      }
+    }
+
+    function goToHome() {
+      document.getElementById('page1').style.display = 'block';
+      document.getElementById('page2').style.display = 'none';
+      document.getElementById('page3').style.display = 'none';
+      document.getElementById('resultsPage').style.display = 'none';
+    }
+
+    function showResults() {
+      const password = prompt('Enter security password:');
+
+      if (password === '1234') {
+        let candidateACount = 0;
+        let candidateBCount = 0;
+
+        for (const vote in votes) {
+          if (votes[vote] === 'Candidate A') {
+            candidateACount++;
+          } else if (votes[vote] === 'Candidate B') {
+            candidateBCount++;
+          }
+        }
+
+        document.getElementById('candidateA').textContent = candidateACount;
+        document.getElementById('candidateB').textContent = candidateBCount;
+        document.getElementById('resultsPage').style.display = 'block';
+        document.getElementById('page1').style.display = 'none';
+        document.getElementById('page2').style.display = 'none';
+        document.getElementById('page3').style.display = 'none';
+      } else {
+        alert('Incorrect password!');
+      }
+    }
+  </script>
+
+</body>
+</html>
